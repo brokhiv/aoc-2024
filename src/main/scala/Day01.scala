@@ -12,7 +12,6 @@ object Day01 extends Day {
     _.unzip
   }
 
-
   override def solve1(puzzle: Puzzle): Int = {
     val (left, right) = puzzle
     left.sorted
@@ -28,13 +27,3 @@ object Day01 extends Day {
     ).sum
   }
 }
-
-//  @main def day01(): Unit = {
-//    val rawInput = Source.fromFile("src\\input\\day01.txt").getLines().mkString("\n")
-//    val parseResult = parseAll(Day01Parser.day01, rawInput)
-//    if (parseResult.successful) {
-//      val puzzle: Puzzle = parseResult.get
-//      println(solve1(puzzle))
-//      println(solve2(puzzle))
-//    } else {
-//      println(s"Parsing failed, position of failure:\n${parseResult.next.pos}")
