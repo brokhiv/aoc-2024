@@ -11,7 +11,7 @@ object Day01 extends Day {
   override def parsePuzzle: Parser[Puzzle] = rep1(line) ^^ {
     _.unzip
   }
-
+  
   override def solve1(puzzle: Puzzle): Int = {
     val (left, right) = puzzle
     left.sorted
