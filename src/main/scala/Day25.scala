@@ -1,6 +1,6 @@
 
 object Day25 extends Day {
-  override val inputFile: String = "day25"
+  override val inputPath: String = "day25"
   override type Puzzle = Nothing
 
   override def parsePuzzle: Day25.Parser[Puzzle] = ???

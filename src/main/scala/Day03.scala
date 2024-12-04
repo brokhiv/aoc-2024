@@ -2,9 +2,9 @@ object Day03 extends Day {
 
   import Instruction._
   
-  override val inputFile: String = "day03"
+  override val inputPath: String = "day03"
   
-  enum Instruction {
+  private enum Instruction {
     case Mul(val a: Int, val b: Int) extends Instruction
     case DoDont(isDo: Boolean) extends Instruction
     case Garbage extends Instruction
@@ -20,10 +20,10 @@ object Day03 extends Day {
   override def parsePuzzle: Parser[Puzzle] = rep(mul | doDont | garbage)
   
   override def solve1(puzzle: Day03.Puzzle) = {
-    puzzle.map {
+    puzzle.sumBy {
       case Instruction.Mul(a, b) => a * b
       case _ => 0
-    }.sum
+    }
   }
 
   override def solve2(puzzle: Day03.Puzzle) = {
