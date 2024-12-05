@@ -36,13 +36,13 @@ trait Day extends RegexParsers {
   /**
    * Runs the Day on a given input location.
    * It first parses the input, then runs both solvers and prints the result.
-   * @param inputPath path to input file, relative from `src\input`` and without the `.txt` extension. 
+   * @param pathOption optional path to input file, relative from `src\input` and without the `.txt` extension.
    *                  If it is `None`, `this.inputPath` will be used by default.
    * @example `run(Some("example"))`: runs the parser and solvers on `src\input\example.txt`.
    */
-  final def run(inputPath: Option[String] = None): Unit = {
-    println(s"Running day ${ inputPath.takeRight(2) } on ${ inputPath.getOrElse("default input") }...")
-    val inputFile = Source.fromFile(s"src\\input\\${ inputPath.getOrElse(inputPath) }.txt")
+  final def run(pathOption: Option[String] = None): Unit = {
+    println(s"Running day ${ inputPath.takeRight(2) } on ${ pathOption.getOrElse("default input") }...")
+    val inputFile = Source.fromFile(s"src\\input\\${ pathOption.getOrElse(inputPath) }.txt")
     val rawInput = inputFile.getLines().mkString("\n")
     inputFile.close()
 

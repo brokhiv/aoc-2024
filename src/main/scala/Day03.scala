@@ -4,7 +4,7 @@ object Day03 extends Day {
   
   override val inputPath: String = "day03"
   
-  private enum Instruction {
+  private[Day03] enum Instruction {
     case Mul(val a: Int, val b: Int) extends Instruction
     case DoDont(isDo: Boolean) extends Instruction
     case Garbage extends Instruction
