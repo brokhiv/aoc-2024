@@ -1,3 +1,4 @@
+import scala.annotation.nowarn
 
 object Day05 extends Day {
   override val inputPath: String = "day05"
@@ -9,6 +10,7 @@ object Day05 extends Day {
   override def parsePuzzle: Day05.Parser[Puzzle] =
     rep1(rule) ~ rep1(update) ^^ { case rules ~ updates => (rules.toSet, updates) }
 
+  @nowarn("msg=match may not be exhaustive")
   private def checkOrdering(rules: Set[(Int, Int)])(xs: List[Int]) =
     xs.sliding(2).forall { case List(a, b) => !rules.contains((b, a)) }
 

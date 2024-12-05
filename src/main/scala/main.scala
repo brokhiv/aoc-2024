@@ -52,7 +52,7 @@ trait Day extends RegexParsers {
       val puzzle: Puzzle = parseResult.get
 
       println(s"Part 1 solution:\n${ solve1(puzzle) }\n")
-      println(s"Part 2 solution\n${ solve2(puzzle) }\n")
+      println(s"Part 2 solution:\n${ solve2(puzzle) }\n")
     } else {
       println(s"Parsing failed, position of failure:\n${ parseResult.next.pos }\n")
     }

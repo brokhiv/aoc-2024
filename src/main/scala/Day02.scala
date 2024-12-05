@@ -1,3 +1,5 @@
+import scala.annotation.nowarn
+
 object Day02 extends Day {
   override val inputPath: String = "day02"
   type Puzzle = List[List[Int]]
@@ -10,6 +12,7 @@ object Day02 extends Day {
 
   override def parsePuzzle: Parser[Puzzle] = rep1sep(line, "\n".r)
 
+  @nowarn("msg=match may not be exhaustive")
   private def checkSafe(report: List[Int]): Boolean = {
     val checkSorted = report.sliding(2)
       .map { case List(a, b) => a < b }
