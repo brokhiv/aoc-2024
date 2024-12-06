@@ -23,6 +23,7 @@ private val solutionsSoFar: List[(String, String)] = List(
   (174103751, 100411201),
   (2504, 1923),
   (7198, 4230),
+  (5329, 2162),
 ).map((a: Any, b: Any) => (a.toString, b.toString))
 
 @main def regressionTest(): Unit = {
