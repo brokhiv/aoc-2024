@@ -25,7 +25,7 @@ object Day06 extends Day {
       case '<' => LEFT
     }
 
-  override type Puzzle = (Set[(Int, Int)], (Int, Int), Direction)
+  override type Puzzle = (List[(Int, Int)], (Int, Int), Direction)
 
   override def skipWhitespace: Boolean = false
   private def position: Parser[Char] = "[.#^>v<]".r ^^ { x => x.head }
@@ -33,7 +33,7 @@ object Day06 extends Day {
   private def extractInfo(lines: List[List[Char]]): Puzzle = {
     val withPositions = lines.zipWithIndex
       .flatMap((row, i) => row.zipWithIndex.map((c, j) => (c, i, j)))
-    val obstacles = withPositions.collect { case ('#', i, j) => (i, j) }.toSet
+    val obstacles = withPositions.collect { case ('#', i, j) => (i, j) }
     val (guardPos, guardDir) = withPositions.find(x => "^>v<".contains(x._1))
       .map((d, i, j) => ((i, j), Direction(d))).get
     (obstacles, guardPos, guardDir)
@@ -57,7 +57,7 @@ object Day06 extends Day {
       (Direction.DOWN, obstacles.maxBy(_._1)._1 + 1),
       (Direction.LEFT, -1)
     )
-    val visited = mutable.Set.empty[(Int, Int)]
+    val visited = mutable.ListBuffer.empty[(Int, Int)]
     var outOfBounds = false
     while !outOfBounds do
       val nextObstacle = obstacles.filter(sees(guardPos, guardDir)).minByOption(manhattan(guardPos))
@@ -77,7 +77,7 @@ object Day06 extends Day {
 
       guardDir = guardDir.next
       outOfBounds = nextObstacle.isEmpty
-    visited.size
+    visited.distinct.size
   }
 
   override def solve2(puzzle: Puzzle): Any = {
@@ -93,14 +93,15 @@ object Day06 extends Day {
       j <- 0 to obstacles0.maxBy(_._2)._2
       if (i, j) != guardPos0
     yield {
-      val obstacles = obstacles0 + ((i, j))
-      val visitedFrom = Map.from(Direction.iterator.map((_, mutable.Set.empty[(Int, Int)])))
+      val obstacles = (i, j) :: obstacles0
+      val visitedFrom = Map.from(Direction.iterator.map((_, mutable.ListBuffer.empty[(Int, Int)])))
       var (guardPos, guardDir) = (guardPos0, guardDir0)
       var inLoop = false
       var outOfBounds = false
       while !inLoop && !outOfBounds do
         val nextObstacle = obstacles.filter(sees(guardPos, guardDir)).minByOption(manhattan(guardPos))
-        inLoop = !nextObstacle.forall(visitedFrom(guardDir).add)
+        inLoop = nextObstacle.exists(visitedFrom(guardDir).contains)
+        nextObstacle.map(visitedFrom(guardDir).append)
         guardPos = guardDir match
           case Direction.UP    =>
             (nextObstacle.map(_._1).getOrElse(bounds(guardDir)) + 1, guardPos._2)
