@@ -1,5 +1,6 @@
 import java.io.{ ByteArrayOutputStream, PrintStream }
 import scala.util.parsing.combinator.RegexParsers
+import scala.collection.mutable
 
 private object OutputParser extends RegexParsers:
   override def skipWhitespace: Boolean = false
@@ -25,22 +26,32 @@ private val solutionsSoFar: List[(String, String)] = List(
   (7198, 4230),                       //5
   (5329, 2162),                       //6
   (6231007345478L, 333027885676693L), //7
+  (228, 766),                         //8
 ).map((a: Any, b: Any) => (a.toString, b.toString))
 
 @main def regressionTest(): Unit = {
   val outputStream = new ByteArrayOutputStream()
   val printStream = new PrintStream(outputStream)
   val originalOut = System.out
+  val errors = mutable.ListBuffer.empty[String]
 
   try {
     System.setOut(printStream)
-
     main(-1)
-
-    val output = OutputParser.parseDays(outputStream.toString())
-    output.lazyZip(solutionsSoFar)
-      .foreach { (out, expected) => assert(out == expected, s"Expected $expected, found $out") }
+    printStream.flush()
+  } catch {
+    case e: AssertionError => errors.append(e.getMessage)
   } finally {
     System.setOut(originalOut)
   }
+
+  val rawOutput = outputStream.toString().replace("\r", "")
+  val output = OutputParser.parseDays(rawOutput)
+  output.lazyZip(solutionsSoFar)
+    .foreach { (out, expected) => if out == expected then () else errors.append(s"Expected $expected, found $out") }
+
+  if errors.nonEmpty then
+    errors.foreach(originalOut.println)
+  else
+    originalOut.println("All days (so far) still work!")
 }

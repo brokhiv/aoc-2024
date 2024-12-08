@@ -70,11 +70,14 @@ val days: List[Day] = List(
 @main
 def main(day: Int = 0, inputPath: String = ""): Unit = {
   val pathOption = if inputPath == "" then None else Some(inputPath)
-  if day == -1 then days.foreach(day => try
-    day.run(pathOption)
-  catch
-    case _: FileNotFoundException => Console.err.println(s"Could not run day ${ days.indexOf(day) + 1 }, input file is missing")
-    case e: NotImplementedError   => Console.err.println(s"Implementation of ${ e.getStackTrace()(1) } is missing")
+  if day == -1 then days.foreach(day => 
+    try
+      day.run(pathOption)
+    catch
+      case _: FileNotFoundException => 
+        Console.err.println(s"Could not run day ${ days.indexOf(day) + 1 }, input file is missing")
+      case e: NotImplementedError   => 
+        Console.err.println(s"Implementation of ${ e.getStackTrace()(1) } is missing")
   )
   else if day == 0 then days(Calendar.getInstance().get(Calendar.DAY_OF_MONTH) - 1).run(pathOption)
   else days(day - 1).run(pathOption)
