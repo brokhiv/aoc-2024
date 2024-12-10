@@ -40,22 +40,33 @@ trait Day extends RegexParsers {
    *                  If it is `None`, `this.inputPath` will be used by default.
    * @example `run(Some("example"))`: runs the parser and solvers on `src\input\example.txt`.
    */
-  final def run(pathOption: Option[String] = None): Unit = {
-    println(s"Running day ${ inputPath.takeRight(2) } on ${ pathOption.getOrElse("default input") }...")
+  final def run(pathOption: Option[String] = None): (String, Long, Long) = {
+    val output = new StringBuilder
+    output.append(s"Running day ${ inputPath.takeRight(2) } on ${ pathOption.getOrElse("default input") }...\n")
     val inputFile = Source.fromFile(s"src\\input\\${ pathOption.getOrElse(inputPath) }.txt")
     val rawInput = inputFile.getLines().mkString("\n")
     inputFile.close()
 
+    var (time1: Long, time2: Long) = (0L, 0L)
     val parseResult = parseAll(parsePuzzle, rawInput)
     if (parseResult.successful) {
-      println("Completed parsing, running solver...")
+      output.append("Completed parsing, running solver...\n")
       val puzzle: Puzzle = parseResult.get
 
-      println(s"Part 1 solution:\n${ solve1(puzzle) }\n")
-      println(s"Part 2 solution:\n${ solve2(puzzle) }\n")
+      val start = System.nanoTime()
+      val solution1 = solve1(puzzle)
+      val mid = System.nanoTime()
+      val solution2 = solve2(puzzle)
+      val end = System.nanoTime()
+      output.append(s"Part 1 solution:\n$solution1\n\n")
+      output.append(s"Part 2 solution:\n$solution2\n\n")
+      time1 = mid - start
+      time2 = end - mid
     } else {
-      println(s"Parsing failed, position of failure:\n${ parseResult.next.pos }\n")
+      output.append(s"Parsing failed, position of failure:\n${ parseResult.next.pos }\n\n")
     }
+
+    (output.mkString, time1, time2)
   }
 }
 
@@ -72,13 +83,13 @@ def main(day: Int = 0, inputPath: String = ""): Unit = {
   val pathOption = if inputPath == "" then None else Some(inputPath)
   if day == -1 then days.foreach(day => 
     try
-      day.run(pathOption)
+      print(day.run(pathOption)._1)
     catch
       case _: FileNotFoundException => 
         Console.err.println(s"Could not run day ${ days.indexOf(day) + 1 }, input file is missing")
       case e: NotImplementedError   => 
         Console.err.println(s"Implementation of ${ e.getStackTrace()(1) } is missing")
   )
-  else if day == 0 then days(Calendar.getInstance().get(Calendar.DAY_OF_MONTH) - 1).run(pathOption)
-  else days(day - 1).run(pathOption)
+  else if day == 0 then print(days(Calendar.getInstance().get(Calendar.DAY_OF_MONTH) - 1).run(pathOption)._1)
+  else print(days(day - 1).run(pathOption)._1)
 }
